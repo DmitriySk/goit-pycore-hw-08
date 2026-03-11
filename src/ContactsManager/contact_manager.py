@@ -8,11 +8,11 @@ from Utils.ParseInput import parse_input
 
 
 def input_txt(message):
-    print(Fore.GREEN+"Notes ", end="")
+    print(Fore.GREEN+"Contacts ", end="")
     return input(Style.RESET_ALL+message)
 
 def print_message(message):
-    print(Fore.GREEN+"Notes ", end="")
+    print(Fore.GREEN+"Contacts ", end="")
     print(Style.RESET_ALL+message)
 
 class ContactsManager:

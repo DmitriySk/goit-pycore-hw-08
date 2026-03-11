@@ -10,7 +10,7 @@ def main():
     contacts = ContactsManager()
     contacts.load(f"{current_dir}/contacts.pkl")
     notes = Notes()
-    notes.load(f"{current_dir}/notifications.pkl")
+    notes.load(f"{current_dir}/notes.pkl")
     print("Welcome to the assistant bot!")
     while True:
         print(f"Print {Fore.GREEN}contacts{Style.RESET_ALL} to work with contacts")
@@ -30,7 +30,7 @@ def main():
         else:
             print(contacts.invalid())
     contacts.save(f"{current_dir}/contacts.pkl")
-    notes.save(f"{current_dir}/notifications.pkl")
+    notes.save(f"{current_dir}/notes.pkl")
 
 if __name__ == "__main__":
     main()

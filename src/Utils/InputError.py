@@ -1,8 +1,9 @@
 from functools import wraps
-from AddressBook.address_book import AddressBookError
+
+from Utils.errors import AddressBookError, NotesError
 from colorama import Fore, Style
 
-def input_error(required_args):
+def input_error(required_args = 0):
     def inner_wrap(func):
         @wraps(func)
         def inner(*args, **kwargs):
@@ -12,8 +13,10 @@ def input_error(required_args):
                 return func(*args, **kwargs)
             except AddressBookError as e:
                 return str(e)
-            except Exception:
-                return Fore.RED+"Something went wrong. Try again"+Style.RESET_ALL
+            except NotesError as e:
+                return str(e)
+            # except Exception:
+            #     return Fore.RED+"Something went wrong. Try again"+Style.RESET_ALL
 
         return inner
     return inner_wrap

@@ -1,8 +1,8 @@
 from collections import UserDict
 from datetime import datetime
 
-class AddressBookError(Exception):
-    pass
+from Utils.errors import AddressBookError
+
 
 class Field:
     def __init__(self, value):
