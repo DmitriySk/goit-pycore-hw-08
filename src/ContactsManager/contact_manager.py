@@ -1,29 +1,41 @@
-from functools import wraps
-from src.AddressBook.address_book import AddressBook, Record, AddressBookError
 from pathlib import Path
 import pickle
+from colorama import Fore, Style
 
-def input_error(required_args):
-    def inner_wrap(func):
-        @wraps(func)
-        def inner(*args, **kwargs):
-            if len(args) + len(kwargs) - 1 < required_args:
-                return "Enter all the arguments for the command"
-            try:
-                return func(*args, **kwargs)
-            except AddressBookError as e:
-                return str(e)
+from AddressBook.address_book import AddressBook, Record, AddressBookError
+from Utils.InputError import input_error
+from Utils.ParseInput import parse_input
 
-        return inner
-    return inner_wrap
 
-def parse_input(user_input):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
-    return cmd, *args
+def input_txt(message):
+    print(Fore.GREEN+"Notes ", end="")
+    return input(Style.RESET_ALL+message)
+
+def print_message(message):
+    print(Fore.GREEN+"Notes ", end="")
+    print(Style.RESET_ALL+message)
 
 class ContactsManager:
-    book = AddressBook()
+    def __init__(self):
+        self.book = AddressBook()
+
+    @staticmethod
+    def print_help():
+        print_message(f"Enter {Fore.GREEN}add [name] [phone number]{Style.RESET_ALL} to add contact")
+        print_message(f"Enter {Fore.GREEN}change [name] [old phone] [new phone]{Style.RESET_ALL} to change contact phone")
+        print_message(f"Enter {Fore.GREEN}add_birthday [name] [birth date]{Style.RESET_ALL} to add contact birthday")
+        print_message(f"Enter {Fore.GREEN}show_birthday [name]{Style.RESET_ALL} to show contact birthday")
+        print_message(f"Enter {Fore.GREEN}birthdays{Style.RESET_ALL} to show all contacts birthday")
+        print_message(f"Enter {Fore.GREEN}phone [name]{Style.RESET_ALL} to show contact info")
+        print_message(f"Enter {Fore.GREEN}all{Style.RESET_ALL} to show all contacts")
+
+    @staticmethod
+    def hello(self):
+        return "Hello! How can I help you?"
+
+    @staticmethod
+    def help():
+        ContactsManager.print_help()
 
     def save(self, filename):
         with open(filename, "wb") as f:
@@ -39,9 +51,18 @@ class ContactsManager:
         if not name in self.book:
             raise AddressBookError("Contact not found")
 
-    # hello
-    def hello(self):
-        return "Hello! How can I help you?"
+    def loop(self):
+        ContactsManager.print_help()
+        while True:
+            user_input = input_txt("Enter a command: ")
+            command, *args = parse_input(user_input)
+
+            if command == 'q':
+                break
+            elif hasattr(self, command):
+                print(getattr(self, command)(*args))
+            else:
+                print_message("Invalid command")
 
     # add [ім'я] [телефон]
     @input_error(required_args=1)
@@ -102,24 +123,3 @@ class ContactsManager:
 
     def __repr__(self):
         return str(self.book)
-
-
-def main():
-    contacts = ContactsManager()
-    contacts.load("contacts.pkl")
-    print("Welcome to the assistant bot!")
-    while True:
-        user_input = input("Enter a command: ")
-        command, *args = parse_input(user_input)
-
-        if command in ["close", "exit", "quit"]:
-            print("Good bye!")
-            break
-        elif hasattr(contacts, command):
-            print(getattr(contacts, command)(*args))
-        else:
-            print(contacts.invalid())
-    contacts.save("contacts.pkl")
-
-if __name__ == "__main__":
-    main()
